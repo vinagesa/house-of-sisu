@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title style="color: red; font-family: 'Georgia', 'Times New Roman', serif; font-size: 42px;">
+  House of Sisu
+</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#0b0f1a;color:#fff;scroll-behavior:smooth}
+header{position:fixed;width:100%;top:0;display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:rgba(0,0,0,0.8);z-index:1000}
+header h1{color:#d4af37}
+nav a{margin-left:20px;color:#fff;text-decoration:none}
+nav a:hover{color:#d4af37}
+
+.hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622') center/cover}
+.hero h2{font-size:3rem}
+.btn{margin-top:20px;padding:12px 25px;border:none;border-radius:30px;background:#d4af37;color:#000;cursor:pointer}
+
+.section{padding:80px 40px;text-align:center}
+.services,.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:#111827;padding:20px;border-radius:15px;transition:.3s}
+.card:hover{transform:translateY(-10px)}
+.gallery img{width:100%;border-radius:10px}
+
+form{max-width:500px;margin:auto;display:flex;flex-direction:column;gap:15px}
+input,textarea{padding:10px;border:none;border-radius:8px}
+
+.dashboard{display:none;padding:40px}
+.booking-item{background:#111827;margin:10px;padding:15px;border-radius:10px}
+
+footer{background:#020617;text-align:center;padding:20px}
+.fade{opacity:0;transform:translateY(20px);transition:1s}
+.fade.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>House of Sisu</h1>
+<nav>
+<a href="#">Home</a>
+<a href="#services">Services</a>
+<a href="#gallery">Gallery</a>
+<a href="#contact">Book</a>
+<a href="#" onclick="openAdmin()">Admin</a>
+</nav>
+</header>
+
+<section class="hero">
+<h2>Luxury Event Experiences</h2>
+<p>Elegant. Bold. Unforgettable.</p>
+<button class="btn" onclick="scrollToContact()">Book Now</button>
+</section>
+
+<section id="services" class="section fade">
+<h2>Services</h2>
+<div class="services">
+<div class="card"><h3>Weddings</h3></div>
+<div class="card"><h3>Corporate</h3></div>
+<div class="card"><h3>Private Parties</h3></div>
+</div>
+</section>
+
+<section id="gallery" class="section fade">
+    <h2>Gallery</h2>
+
+    <div class="gallery">
+        <img src="images2/wedding1.png" alt="Wedding photo 1">
+        <img src="images2/wedding2.png" alt="Wedding photo 2">
+        <img src="images2/wedding3.png" alt="Wedding photo 3">
+    </div>
+</section>
+
+<section id="contact" class="section fade">
+<h2>Book Event</h2>
+<form onsubmit="saveBooking(event)">
+<input type="text" id="name" placeholder="Name" required>
+<input type="text" id="phone" placeholder="Phone" required>
+<textarea id="message" placeholder="Event Details"></textarea>
+<button class="btn">Submit</button>
+</form>
+<br>
+<button class="btn" onclick="payMpesa()">Pay Deposit (M-Pesa)</button>
+</section>
+
+<section class="dashboard" id="admin">
+<h2>Admin Dashboard</h2>
+<div id="bookings"></div>
+</section>
+
+<footer>
+<p>© 2026 House of Sisu</p>
+</footer>
+
+<script>
+function scrollToContact(){document.getElementById('contact').scrollIntoView({behavior:'smooth'})}
+
+function saveBooking(e){
+ e.preventDefault();
+ let name=document.getElementById('name').value;
+ let phone=document.getElementById('phone').value;
+ let msg=document.getElementById('message').value;
+
+ let bookings=JSON.parse(localStorage.getItem('bookings')||'[]');
+ bookings.push({name,phone,msg});
+ localStorage.setItem('bookings',JSON.stringify(bookings));
+
+ alert('Booking saved!');
+ sendWhatsApp(name,phone,msg);
+}
+
+function sendWhatsApp(name,phone,msg){
+ let url=`https://wa.me/254XXXXXXXXX?text=Name:${name}, Phone:${phone}, Event:${msg}`;
+ window.open(url,'_blank');
+}
+
+function openAdmin(){
+ document.getElementById('admin').style.display='block';
+ loadBookings();
+}
+
+function loadBookings(){
+ let container=document.getElementById('bookings');
+ container.innerHTML='';
+ let bookings=JSON.parse(localStorage.getItem('bookings')||'[]');
+ bookings.forEach(b=>{
+   container.innerHTML+=`<div class='booking-item'>${b.name} - ${b.phone}<br>${b.msg}</div>`;
+ });
+}
+
+function payMpesa(){
+ alert('To integrate M-Pesa fully, connect Safaricom Daraja API. I can help you do this backend.');
+}
+
+const fades=document.querySelectorAll('.fade');
+window.addEventListener('scroll',()=>{
+ fades.forEach(el=>{
+  let top=el.getBoundingClientRect().top;
+  if(top<window.innerHeight-50){el.classList.add('show');}
+ })
+});
+</script>
+
+</body>
+</html>
